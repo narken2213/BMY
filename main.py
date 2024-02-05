@@ -61,7 +61,7 @@ class Example(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
-            self.lat -= LAT_STEP * math.pow(2, 15 - self.z)
+            self.lat += LAT_STEP * math.pow(2, 15 - self.z)
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
