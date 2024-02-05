@@ -17,7 +17,7 @@ class Example(QWidget):
     def getImage(self, address_ll, delta):
         map_params = {
             "ll": address_ll,
-            "spn": delta,
+            "z": 12,
             "l": "map",
             "pt": f"{address_ll},pm2dgl"
         }
