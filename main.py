@@ -65,6 +65,18 @@ class Example(QWidget):
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_PageUp:
+            if self.z <= 20:
+                self.z += 1
+                self.getImage()
+                self.pixmap = QPixmap(self.map_file)
+                self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_PageDown:
+            if self.z >= 1:
+                self.z -= 1
+                self.getImage()
+                self.pixmap = QPixmap(self.map_file)
+                self.image.setPixmap(self.pixmap)
 
     def new_address(self):
         s = input('Напиши адрес')
