@@ -1,28 +1,32 @@
 import os
 import sys
-
+from geocoder import *
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-
-import geocoder
 
 SCREEN_SIZE = [600, 450]
 
 
 class Example(QWidget):
-    def __init__(self):
+    def __init__(self, address_ll, delta):
         super().__init__()
-        self.getImage()
+        self.getImage(address_ll, delta)
         self.initUI()
 
-    def getImage(self):
-        map_request = "http://static-maps.yandex.ru/1.x/?ll=37.530887,55.703118&spn=0.002,0.002&l=map"
-        response = requests.get(map_request)
+    def getImage(self, address_ll, delta):
+        map_params = {
+            "ll": address_ll,
+            "spn": delta,
+            "l": "map",
+            "pt": f"{address_ll},pm2dgl"
+        }
+        map_api_server = "http://static-maps.yandex.ru/1.x/"
+        response = requests.get(map_api_server, params=map_params)
 
         if not response:
             print("Ошибка выполнения запроса:")
-            print(map_request)
+            print(map_api_server)
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
 
@@ -49,8 +53,10 @@ class Example(QWidget):
 
 if __name__ == '__main__':
     s = input('Напиши адрес')
-    adress = ','.join([str(x) for x in geocoder.get_coordinates(s)])
+    print(get_ll_span(s))
+    adress = get_ll_span(s)[0]
+    delta = get_ll_span(s)[1]
     app = QApplication(sys.argv)
-    ex = Example(adress, "0.002")
+    ex = Example(adress, delta)
     ex.show()
     sys.exit(app.exec())
