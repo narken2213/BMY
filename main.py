@@ -60,8 +60,18 @@ class Example(QWidget):
         os.remove(self.map_file)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_F:
-            self.lon -= LON_STEP * math.pow(2, 15 - self.z)
+        if event.key() == Qt.Key_Up:
+            self.lat -= LAT_STEP * math.pow(2, 15 - self.z)
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_Right:
+            self.lon += LON_STEP * math.pow(2, 15 - self.z)
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_Down:
+            self.lat -= LON_STEP * math.pow(2, 15 - self.z)
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
