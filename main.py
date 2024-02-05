@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 from geocoder import *
@@ -7,24 +8,29 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtCore import Qt
 
 SCREEN_SIZE = [600, 450]
+# Подобранные константы для поведения карты.
+LAT_STEP = 0.008  # Шаги при движении карты по широте и долготе
+LON_STEP = 0.002
+coord_to_geo_x = 0.0000428  # Пропорции пиксельных и географических координат.
+coord_to_geo_y = 0.0000428
 
 
 class Example(QWidget):
-    def __init__(self, address_ll, z):
+    def __init__(self):
         super().__init__()
-        self.address_ll = address_ll
-        self.z = z
+        self.lon = 37.612308
+        self.lat = 55.658444
+        self.z = 15
         self.getImage()
         self.initUI()
 
     def getImage(self):
-        print('xa', self.address_ll)
         map_params = {
-            "ll": self.address_ll,
+            "ll": ','.join([str(self.lon), str(self.lat)]),
             #"spn": delta,
             "z": self.z,  # 0 - 21
             "l": "map",
-            "pt": f"{self.address_ll},pm2dgl"
+            "pt": f"{','.join([str(self.lon), str(self.lat)])},pm2dgl"
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
@@ -54,26 +60,25 @@ class Example(QWidget):
         os.remove(self.map_file)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_PageUp:
-            if self.z <= 20:
-                self.z += 1
-                self.getImage()
-                self.pixmap = QPixmap(self.map_file)
-                self.image.setPixmap(self.pixmap)
-        if event.key() == Qt.Key_PageDown:
-            if self.z >= 1:
-                self.z -= 1
-                self.getImage()
-                self.pixmap = QPixmap(self.map_file)
-                self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_F:
+            self.lon -= LON_STEP * math.pow(2, 15 - self.z)
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+
+    def new_address(self):
+        s = input('Напиши адрес')
+        self.lon = get_coordinates(s)[0]
+        self.lat = get_coordinates(s)[1]
+        self.z = 12
+        self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
 
 
 if __name__ == '__main__':
-    s = input('Напиши адрес')
-    print(get_ll_span(s))
-    adress = get_ll_span(s)[0]
-    z = 6
     app = QApplication(sys.argv)
-    ex = Example(adress, z)
+    ex = Example()
     ex.show()
+    #ex.new_address()
     sys.exit(app.exec())
