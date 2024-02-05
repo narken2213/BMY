@@ -4,22 +4,27 @@ from geocoder import *
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtCore import Qt
 
 SCREEN_SIZE = [600, 450]
 
 
 class Example(QWidget):
-    def __init__(self, address_ll, delta):
+    def __init__(self, address_ll, z):
         super().__init__()
-        self.getImage(address_ll, delta)
+        self.address_ll = address_ll
+        self.z = z
+        self.getImage()
         self.initUI()
 
-    def getImage(self, address_ll, delta):
+    def getImage(self):
+        print('xa', self.address_ll)
         map_params = {
-            "ll": address_ll,
-            "z": 12,
+            "ll": self.address_ll,
+            #"spn": delta,
+            "z": self.z,  # 0 - 21
             "l": "map",
-            "pt": f"{address_ll},pm2dgl"
+            "pt": f"{self.address_ll},pm2dgl"
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
@@ -38,8 +43,6 @@ class Example(QWidget):
     def initUI(self):
         self.setGeometry(100, 100, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
-
-        ## Изображение
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
@@ -50,13 +53,20 @@ class Example(QWidget):
         """При закрытии формы подчищаем за собой"""
         os.remove(self.map_file)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_F:
+            self.z = 21
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+
 
 if __name__ == '__main__':
     s = input('Напиши адрес')
     print(get_ll_span(s))
     adress = get_ll_span(s)[0]
-    delta = get_ll_span(s)[1]
+    z = 6
     app = QApplication(sys.argv)
-    ex = Example(adress, delta)
+    ex = Example(adress, z)
     ex.show()
     sys.exit(app.exec())
