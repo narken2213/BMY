@@ -5,6 +5,8 @@ import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 
+import geocoder
+
 SCREEN_SIZE = [600, 450]
 
 
@@ -46,7 +48,9 @@ class Example(QWidget):
 
 
 if __name__ == '__main__':
+    s = input('Напиши адрес')
+    adress = ','.join([str(x) for x in geocoder.get_coordinates(s)])
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = Example(adress, "0.002")
     ex.show()
     sys.exit(app.exec())
