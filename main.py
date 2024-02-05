@@ -77,6 +77,11 @@ class Example(QWidget):
                 self.getImage()
                 self.pixmap = QPixmap(self.map_file)
                 self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_Left:
+            self.lon -= LON_STEP * math.pow(2, 15 - self.z)
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
 
     def new_address(self):
         s = input('Напиши адрес')
@@ -92,5 +97,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()
-    #ex.new_address()
+    ex.new_address()
     sys.exit(app.exec())
