@@ -54,11 +54,18 @@ class Example(QWidget):
         os.remove(self.map_file)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_F:
-            self.z = 21
-            self.getImage()
-            self.pixmap = QPixmap(self.map_file)
-            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_PageUp:
+            if self.z <= 20:
+                self.z += 1
+                self.getImage()
+                self.pixmap = QPixmap(self.map_file)
+                self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_PageDown:
+            if self.z >= 1:
+                self.z -= 1
+                self.getImage()
+                self.pixmap = QPixmap(self.map_file)
+                self.image.setPixmap(self.pixmap)
 
 
 if __name__ == '__main__':
